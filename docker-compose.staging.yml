@@ -1,0 +1,67 @@
+
+
+networks:
+  staging-network:
+    driver: bridge
+
+volumes:
+  postgres-staging-data:
+    driver: local
+
+services:
+
+  app:
+    image: laravel-app:dev
+    container_name: laravel-staging-app
+    restart: "no"
+    environment:
+      APP_NAME: "Laravel Staging"
+      APP_ENV: local
+      APP_KEY: base64:5rS0kz1ZsvWTtr5kLbuTck2ZE3+MDKdMQbQD6M2nYZU=
+      APP_DEBUG: "true"
+      APP_URL: http://localhost
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: laravel_staging
+      DB_USERNAME: staging_user
+      DB_PASSWORD: staging_pass_123
+    volumes:
+      - ./storage:/var/www/html/storage
+    networks:
+      - staging-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: laravel-staging-nginx
+    restart: "no"
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./public:/var/www/html/public:ro
+    networks:
+      - staging-network
+    depends_on:
+      - app
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: laravel-staging-postgres
+    restart: "no"
+    environment:
+      POSTGRES_DB: laravel_staging
+      POSTGRES_USER: staging_user
+      POSTGRES_PASSWORD: staging_pass_123
+    volumes:
+      - postgres-staging-data:/var/lib/postgresql/data
+    networks:
+      - staging-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U staging_user -d laravel_staging"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
