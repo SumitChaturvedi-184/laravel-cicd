@@ -17,7 +17,7 @@ services:
     environment:
       APP_NAME: "Laravel Staging"
       APP_ENV: local
-      APP_KEY: base64:5rS0kz1ZsvWTtr5kLbuTck2ZE3+MDKdMQbQD6M2nYZU=
+      APP_KEY: ${APP_KEY}
       APP_DEBUG: "true"
       APP_URL: http://localhost
       DB_CONNECTION: pgsql
