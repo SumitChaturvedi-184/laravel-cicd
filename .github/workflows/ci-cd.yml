@@ -50,7 +50,7 @@ jobs:
           restore-keys: composer-
 
       - name: Install PHP dependencies
-        run: composer install --no-dev --optimize-autoloader --no-interaction
+        run: composer install --optimize-autoloader --no-interaction
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
