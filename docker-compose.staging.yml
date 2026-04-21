@@ -11,7 +11,7 @@ volumes:
 services:
 
   app:
-    image: laravel-app:dev
+    image: rising184/laravel-app:latest
     container_name: laravel-staging-app
     restart: "no"
     environment:
